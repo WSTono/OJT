@@ -2,23 +2,23 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>画像検索</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="initial-screen" class="screen">
-      <h1>画像検索</h1>
+    <div id="initial-screen" class="screen active">
+      <h1>画像検索 初期画面</h1>
       <input type="file" id="image-input" accept="image/*" />
       <button id="search-button">検索</button>
       <div id="selected-image-container"></div>
     </div>
 
-    <div id="result-screen" class="screen hidden">
-      <h1>検索結果</h1>
+    <div id="result-screen" class="screen">
+      <h1>検索結果一覧画面</h1>
       <div id="selected-image-preview"></div>
       <div id="result-image-container" class="grid"></div>
-      <button id="back-button">戻る</button>
+      <button id="back-button">初期画面に戻る</button>
     </div>
 
     <script src="script.js"></script>
