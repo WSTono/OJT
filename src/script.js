@@ -25,7 +25,7 @@ imageInput.addEventListener("change", () => {
 
 searchButton.addEventListener("click", async () => {
   if (!imageBase64) {
-    alert("画像選択してから検索しろや");
+    alert("画像選択してから検索");
     return;
   }
 
@@ -47,7 +47,7 @@ searchButton.addEventListener("click", async () => {
     const results = data.results.slice(0, 6);
     showResults(results);
   } catch (err) {
-    alert("検索失敗だ、もう一回試せ");
+    alert("検索失敗、もう一度お願いします");
     console.error(err);
   }
 });
