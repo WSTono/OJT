@@ -20,44 +20,38 @@ function resizeCanvas() {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-const flowers = Array.from({ length: 50 }, () => ({
-  x: Math.random() * canvas.width,
-  y: Math.random() * canvas.height,
-  size: Math.random() * 20 + 10,
-  dx: Math.random() * 0.5 - 0.25,
-  dy: Math.random() * 0.5 + 0.2,
-  petalColor: `hsl(${Math.random() * 360}, 70%, 80%)`,
+const caterpillars = Array.from({ length: 30 }, () => ({
+  segments: Array.from({ length: 10 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+  })),
+  dx: Math.random() * 1 - 0.5,
+  dy: Math.random() * 1 - 0.5,
+  color: `hsl(${Math.random() * 360}, 80%, 70%)`,
 }));
 
-function drawFlower(x, y, size, color) {
-  const petalCount = 5;
-  ctx.save();
-  ctx.translate(x, y);
-  for (let i = 0; i < petalCount; i++) {
-    ctx.rotate((Math.PI * 2) / petalCount);
-    ctx.beginPath();
-    ctx.ellipse(0, size / 4, size / 2, size / 4, 0, 0, 2 * Math.PI);
-    ctx.fillStyle = color;
-    ctx.fill();
-  }
-  ctx.restore();
-}
-
-function drawFlowers() {
+function drawCaterpillars() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for (let flower of flowers) {
-    drawFlower(flower.x, flower.y, flower.size, flower.petalColor);
+  for (let c of caterpillars) {
+    for (let i = c.segments.length - 1; i > 0; i--) {
+      c.segments[i].x = c.segments[i - 1].x;
+      c.segments[i].y = c.segments[i - 1].y;
+    }
+    c.segments[0].x += c.dx;
+    c.segments[0].y += c.dy;
+    if (c.segments[0].x < 0 || c.segments[0].x > canvas.width) c.dx *= -1;
+    if (c.segments[0].y < 0 || c.segments[0].y > canvas.height) c.dy *= -1;
 
-    flower.x += flower.dx;
-    flower.y += flower.dy;
-
-    if (flower.y > canvas.height) flower.y = 0;
-    if (flower.x > canvas.width) flower.x = 0;
-    if (flower.x < 0) flower.x = canvas.width;
+    for (let i = 0; i < c.segments.length; i++) {
+      ctx.beginPath();
+      ctx.arc(c.segments[i].x, c.segments[i].y, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = c.color;
+      ctx.fill();
+    }
   }
-  requestAnimationFrame(drawFlowers);
+  requestAnimationFrame(drawCaterpillars);
 }
-drawFlowers();
+drawCaterpillars();
 
 imageInput.addEventListener("change", () => {
   const file = imageInput.files[0];
