@@ -1,3 +1,4 @@
+/* script.js */
 const imageInput = document.getElementById("image-input");
 const searchButton = document.getElementById("search-button");
 const backButton = document.getElementById("back-button");
@@ -8,8 +9,45 @@ const selectedImageContainer = document.getElementById(
 );
 const selectedImagePreview = document.getElementById("selected-image-preview");
 const resultImageContainer = document.getElementById("result-image-container");
+const canvas = document.getElementById("background-canvas");
+const ctx = canvas.getContext("2d");
 
 let imageBase64 = "";
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+const flowers = Array.from({ length: 100 }, () => ({
+  x: Math.random() * canvas.width,
+  y: Math.random() * canvas.height,
+  radius: Math.random() * 5 + 2,
+  dx: Math.random() * 0.5 - 0.25,
+  dy: Math.random() * 0.5 + 0.2,
+  color: `hsl(${Math.random() * 360}, 70%, 80%)`,
+}));
+
+function drawFlowers() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let flower of flowers) {
+    ctx.beginPath();
+    ctx.arc(flower.x, flower.y, flower.radius, 0, Math.PI * 2);
+    ctx.fillStyle = flower.color;
+    ctx.fill();
+
+    flower.x += flower.dx;
+    flower.y += flower.dy;
+
+    if (flower.y > canvas.height) flower.y = 0;
+    if (flower.x > canvas.width) flower.x = 0;
+    if (flower.x < 0) flower.x = canvas.width;
+  }
+  requestAnimationFrame(drawFlowers);
+}
+drawFlowers();
 
 imageInput.addEventListener("change", () => {
   const file = imageInput.files[0];
@@ -17,7 +55,7 @@ imageInput.addEventListener("change", () => {
 
   const reader = new FileReader();
   reader.onload = (e) => {
-    imageBase64 = e.target.result.split(",")[1]; // Base64だけ取り出す
+    imageBase64 = e.target.result.split(",")[1];
     selectedImageContainer.innerHTML = `<img src="${e.target.result}" alt="選択画像" />`;
   };
   reader.readAsDataURL(file);
@@ -25,7 +63,7 @@ imageInput.addEventListener("change", () => {
 
 searchButton.addEventListener("click", async () => {
   if (!imageBase64) {
-    alert("画像選択してから検索");
+    alert("画像選択してから検索しろや");
     return;
   }
 
@@ -42,35 +80,27 @@ searchButton.addEventListener("click", async () => {
     if (!res.ok) throw new Error("APIエラー");
 
     const data = await res.json();
-
-    // 6枚だけ表示
     const results = data.results.slice(0, 6);
     showResults(results);
   } catch (err) {
-    alert("検索失敗、もう一度お願いします");
+    alert("検索失敗だ、もう一回試せ");
     console.error(err);
   }
 });
 
 backButton.addEventListener("click", () => {
-  // 初期画面に戻る
   resultScreen.classList.remove("active");
   initialScreen.classList.add("active");
-  // 検索結果消す
   resultImageContainer.innerHTML = "";
   selectedImagePreview.innerHTML = "";
 });
 
 function showResults(images) {
-  // 選択画像表示（検索結果画面）
   selectedImagePreview.innerHTML = selectedImageContainer.innerHTML;
-
-  // 検索結果6枚を下に表示
   resultImageContainer.innerHTML = images
     .map((url) => `<img src="${url}" alt="検索結果画像" />`)
     .join("");
 
-  // 画面切り替え
   initialScreen.classList.remove("active");
   resultScreen.classList.add("active");
 }

@@ -3,12 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>画像検索!</title>
+    <title>画像検索</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <canvas id="background-canvas"></canvas>
+
     <div id="initial-screen" class="screen active">
-      <h1>画像検索 初期画</h1>
+      <h1>画像検索 初期画面</h1>
       <input type="file" id="image-input" accept="image/*" />
       <button id="search-button">検索</button>
       <div id="selected-image-container"></div>
